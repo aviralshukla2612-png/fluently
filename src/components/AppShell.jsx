@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { User } from "lucide-react";
 import Navbar from "./Navbar";
+import MobileBottomNav from "./MobileBottomNav";
 import LanguageSelector from "./LanguageSelector";
 import { useAuth } from "@/lib/auth/useAuth";
 
@@ -85,8 +86,8 @@ export default function AppShell({ children }) {
             </div>
           </div>
 
-          {/* Mobile / Tablet Nav Pill row when < lg */}
-          <div className="lg:hidden w-full flex justify-center overflow-x-auto no-scrollbar py-0.5">
+          {/* Mobile / Tablet Nav Pill row when < lg (smooth horizontal swipe without left clipping) */}
+          <div className="lg:hidden w-full flex justify-start sm:justify-center overflow-x-auto no-scrollbar py-0.5 px-1 sm:px-0">
             <Navbar />
           </div>
 
@@ -107,7 +108,9 @@ export default function AppShell({ children }) {
       {/* Semantic Main Content */}
       <main
         className={`flex-1 w-full max-w-[1120px] mx-auto px-3 sm:px-6 md:px-8 ${
-          isConversation ? "flex flex-col min-h-0 overflow-hidden pb-2 pt-1" : "py-6 md:py-10"
+          isConversation
+            ? "flex flex-col min-h-0 overflow-hidden pb-2 pt-1"
+            : "py-4 sm:py-6 md:py-10 pb-24 md:pb-10"
         }`}
       >
         {children}
@@ -115,19 +118,22 @@ export default function AppShell({ children }) {
 
       {/* Minimal editorial footer only when not on full-height conversation view */}
       {!isConversation && (
-        <footer className="w-full border-t border-[#E6E2D9] py-8 text-center text-xs text-[#929087] shrink-0">
+        <footer className="w-full border-t border-[#E6E2D9] py-8 pb-28 md:pb-8 text-center text-xs text-[#929087] shrink-0">
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>© 2026 Fluently. Practice with purpose and clarity.</p>
-            <div className="flex items-center gap-4 text-[#716F65]">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#716F65]">
               <span>Calm & Focused</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>Natural Accent</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>Sentence by Sentence</span>
             </div>
           </div>
         </footer>
       )}
+
+      {/* Floating Bottom Navigation on Mobile Phones (< md) */}
+      <MobileBottomNav />
     </div>
   );
 }

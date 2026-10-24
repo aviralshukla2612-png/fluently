@@ -80,21 +80,21 @@ export default function HomePage() {
               <span>Practice • Improve • Express</span>
             </div>
 
-            <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-[52px] text-[#30362F] leading-[1.12] tracking-tight">
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-[52px] text-[#30362F] leading-[1.12] tracking-tight">
               Build confidence in English,{" "}
               <span className="text-[#203D35] italic font-serif">one sentence</span> at a time.
             </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-[#716F65] leading-relaxed max-w-xl">
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-[#716F65] leading-relaxed max-w-xl">
               Real conversations. Focused practice. Measurable progress. Master the
               natural cadence of English through high-repetition shadowing, active
               listening dictation, and contextual review.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <Link
                 href="/say-it"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-[#203D35] text-white text-sm font-semibold hover:bg-[#294C42] shadow-sm hover:shadow-md transition-all duration-200 focus-accessible"
+                className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#203D35] text-white text-sm font-semibold hover:bg-[#294C42] shadow-sm hover:shadow-md transition-all duration-200 focus-accessible touch-manipulation min-h-[46px]"
               >
                 <span>Start Practice</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -102,7 +102,7 @@ export default function HomePage() {
 
               <Link
                 href="/dictation"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-white border border-[#E6E2D9] text-[#30362F] text-sm font-medium hover:border-[#CEDDD2] hover:bg-[#FAF9F5] transition-all duration-200 focus-accessible"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white border border-[#E6E2D9] text-[#30362F] text-sm font-medium hover:border-[#CEDDD2] hover:bg-[#FAF9F5] transition-all duration-200 focus-accessible touch-manipulation min-h-[46px]"
               >
                 <Headphones className="w-4 h-4 text-[#716F65]" aria-hidden="true" />
                 <span>Try Dictation</span>
@@ -110,7 +110,7 @@ export default function HomePage() {
 
               <Link
                 href="/conversation"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-[#E3EDE6] border border-[#CEDDD2] text-[#203D35] text-sm font-semibold hover:bg-[#d4e4d7] transition-all duration-200 focus-accessible shadow-xs"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#E3EDE6] border border-[#CEDDD2] text-[#203D35] text-sm font-semibold hover:bg-[#d4e4d7] transition-all duration-200 focus-accessible shadow-xs touch-manipulation min-h-[46px]"
               >
                 <MessageSquare className="w-4 h-4 text-[#203D35]" aria-hidden="true" />
                 <span>AI Conversation</span>
@@ -119,12 +119,12 @@ export default function HomePage() {
           </div>
 
           {/* Right Visual Composition */}
-          <div className="lg:col-span-5 relative mt-4 lg:mt-0 flex justify-center">
+          <div className="lg:col-span-5 relative mt-4 lg:mt-0 flex justify-center w-full">
             {/* Ambient subtle back glow */}
             <div className="absolute inset-0 bg-[#E3EDE6]/40 rounded-[2.5rem] filter blur-2xl -z-10 transform scale-95" />
 
             {/* Framed Image Card */}
-            <div className="relative w-full max-w-[440px] bg-white p-2.5 sm:p-3 rounded-[2rem] border border-[#E6E2D9] shadow-card">
+            <div className="relative w-full max-w-[460px] bg-white p-2.5 sm:p-3 rounded-[2rem] border border-[#E6E2D9] shadow-card">
               <div className="relative overflow-hidden rounded-[1.5rem] aspect-[3/2] bg-[#FAF9F5]">
                 <Image
                   src="/images/hero.png"
@@ -137,15 +137,15 @@ export default function HomePage() {
               </div>
 
               {/* Floating Reflection Quote Badge */}
-              <div className="absolute -bottom-5 sm:-bottom-6 -left-3 sm:-left-6 bg-white/95 backdrop-blur-sm border border-[#E6E2D9] p-3.5 sm:p-4 rounded-2xl shadow-card-hover max-w-[260px] sm:max-w-[290px] flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#E3EDE6] text-[#203D35] flex items-center justify-center shrink-0 mt-0.5">
-                  <Volume2 className="w-4 h-4" aria-hidden="true" />
+              <div className="absolute -bottom-4 sm:-bottom-6 left-2 sm:-left-4 md:-left-6 bg-white/95 backdrop-blur-sm border border-[#E6E2D9] p-3 sm:p-4 rounded-2xl shadow-card-hover max-w-[calc(100%-1rem)] sm:max-w-[290px] flex items-start gap-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E3EDE6] text-[#203D35] flex items-center justify-center shrink-0 mt-0.5">
+                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[#30362F] leading-snug">
+                  <p className="text-[11px] sm:text-xs font-semibold text-[#30362F] leading-snug">
                     “Small conversations create big opportunities.”
                   </p>
-                  <p className="text-[11px] text-[#716F65] mt-1 font-serif italic">
+                  <p className="text-[10px] sm:text-[11px] text-[#716F65] mt-0.5 sm:mt-1 font-serif italic">
                     Calm, focused repetition daily
                   </p>
                 </div>
@@ -156,16 +156,16 @@ export default function HomePage() {
       </section>
 
       {/* Pillars strip */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 bg-white border border-[#E6E2D9] rounded-2xl shadow-card">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6 bg-white border border-[#E6E2D9] rounded-2xl shadow-card">
         {PILLARS.map((pillar, idx) => (
           <div
             key={idx}
-            className="flex flex-col gap-1 p-2 sm:p-3 border-r last:border-r-0 border-[#F2F0E9]"
+            className="flex flex-col gap-1 p-2 sm:p-3 border-r last:border-r-0 lg:border-r border-[#F2F0E9] even:border-r-0 lg:even:border-r"
           >
-            <span className="font-heading font-semibold text-sm sm:text-base text-[#203D35]">
+            <span className="font-heading font-semibold text-xs sm:text-sm md:text-base text-[#203D35]">
               {pillar.label}
             </span>
-            <span className="text-xs text-[#716F65]">
+            <span className="text-[11px] sm:text-xs text-[#716F65] leading-tight">
               {pillar.detail}
             </span>
           </div>

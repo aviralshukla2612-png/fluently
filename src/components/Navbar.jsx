@@ -35,8 +35,11 @@ export default function Navbar({ className = "" }) {
   };
 
   return (
-    <nav aria-label="Main Navigation" className={`inline-flex items-center justify-center ${className}`}>
-      <ul className="inline-flex items-center gap-0.5 sm:gap-1 bg-white border border-[#E6E2D9] rounded-full p-1 sm:p-1.5 shadow-pill min-h-[46px]">
+    <nav
+      aria-label="Main Navigation"
+      className={`inline-flex items-center justify-start sm:justify-center max-w-full ${className}`}
+    >
+      <ul className="inline-flex items-center gap-0.5 sm:gap-1 bg-white border border-[#E6E2D9] rounded-full p-1 sm:p-1.5 shadow-pill min-h-[44px] overflow-x-auto no-scrollbar">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const active = isItemActive(item.href);
@@ -46,7 +49,7 @@ export default function Navbar({ className = "" }) {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-[13px] transition-colors duration-200 whitespace-nowrap focus-accessible ${
+                className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs md:text-[13px] transition-colors duration-200 whitespace-nowrap focus-accessible touch-manipulation ${
                   active
                     ? "bg-[#E3EDE6] text-[#203D35] font-semibold shadow-xs"
                     : "text-[#716F65] font-medium hover:text-[#30362F] hover:bg-[#FAF9F5]"
