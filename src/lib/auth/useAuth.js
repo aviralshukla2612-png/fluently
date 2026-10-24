@@ -12,6 +12,7 @@ const AuthContext = createContext({
   syncError: null,
   hasUnsyncedLocalData: false,
   login: async () => {},
+  loginWithGoogle: async () => {},
   register: async () => {},
   logout: async () => {},
   updatePreferences: async () => {},
@@ -111,6 +112,22 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data?.error?.message || "Failed to log in.");
+    }
+
+    await refreshUser();
+    return data;
+  };
+
+  const loginWithGoogle = async (googleData = {}) => {
+    const res = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(googleData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error?.message || "Failed to continue with Google.");
     }
 
     await refreshUser();
@@ -217,6 +234,7 @@ export function AuthProvider({ children }) {
         syncError,
         hasUnsyncedLocalData,
         login,
+        loginWithGoogle,
         register,
         logout,
         updatePreferences,

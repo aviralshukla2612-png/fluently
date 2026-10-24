@@ -207,6 +207,7 @@ export default function MockTestsLandingPage() {
                 exam={exam}
                 onPurchase={handlePurchase}
                 isPurchasing={purchasingExamId === exam.id}
+                isAuthenticated={isAuthenticated}
               />
             ))}
           </div>

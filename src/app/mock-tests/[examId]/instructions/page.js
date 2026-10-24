@@ -276,6 +276,29 @@ export default function ExamInstructionsPage({ params }) {
           </ul>
         </div>
 
+        {/* Student Sign In Notice if not authenticated */}
+        {!isAuthenticated && (
+          <div className="p-5 sm:p-6 bg-amber-50/70 border border-amber-200/80 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-amber-900">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-bold text-sm text-amber-950">
+                  Student Sign In Required
+                </h4>
+                <p className="text-amber-800/90 mt-0.5">
+                  To save your official mock test responses, AI evaluation, and band score report to your student profile, please sign in or register before starting.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/login?redirect=${encodeURIComponent(`/mock-tests/${examId}/instructions`)}`}
+              className="px-5 py-2.5 rounded-full bg-[#203D35] text-white font-semibold text-xs hover:bg-[#294C42] shrink-0 transition-colors shadow-xs"
+            >
+              Sign In / Register
+            </Link>
+          </div>
+        )}
+
         {/* Start Button */}
         <div className="flex items-center justify-end gap-4 pt-4 border-t border-[#E6E2D9]">
           <Link
@@ -291,7 +314,13 @@ export default function ExamInstructionsPage({ params }) {
             disabled={isStarting}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#203D35] text-white font-bold text-sm hover:bg-[#294C42] disabled:opacity-50 transition-transform active:scale-95 focus-accessible shadow-sm"
           >
-            <span>{isStarting ? "Initializing Clock..." : "Start Examination Now"}</span>
+            <span>
+              {isStarting
+                ? "Initializing Clock..."
+                : !isAuthenticated
+                ? "Sign In to Begin Examination"
+                : "Start Examination Now"}
+            </span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

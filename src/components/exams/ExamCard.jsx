@@ -8,6 +8,7 @@ export default function ExamCard({
   onPurchase,
   isPurchasing = false,
   hasEntitlement = false,
+  isAuthenticated = false,
 }) {
   const isFree = exam.isDiagnostic || exam.pricePaise === 0;
 
@@ -85,7 +86,15 @@ export default function ExamCard({
         </div>
 
         <div>
-          {isFree ? (
+          {!isAuthenticated ? (
+            <Link
+              href={`/login?redirect=${encodeURIComponent(`/mock-tests/${exam.id}/instructions`)}`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#203D35] text-white font-bold text-sm hover:bg-[#294C42] transition-colors focus-accessible shadow-sm w-full sm:w-auto"
+            >
+              <span>Sign In to Start</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+          ) : isFree ? (
             <Link
               href={`/mock-tests/${exam.id}/instructions`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#FAF9F5] border border-[#E6E2D9] text-[#203D35] font-bold text-sm hover:bg-[#E3EDE6] transition-colors focus-accessible shadow-xs w-full sm:w-auto"
