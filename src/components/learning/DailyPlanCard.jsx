@@ -74,15 +74,15 @@ export default function DailyPlanCard() {
   }, [mounted, plan, activities]);
 
   return (
-    <div className="bg-white border border-[#E6E2D9] rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-6">
+    <div className="bg-white border border-[#E6E2D9] rounded-3xl p-4 sm:p-6 md:p-8 shadow-card flex flex-col gap-5 sm:gap-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2F0E9] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2F0E9] pb-4 sm:pb-5">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#466657]">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#466657]">
               Today&apos;s Personalized Plan
             </span>
-            <span className="text-[11px] font-medium text-[#716F65] bg-[#FAF9F5] border border-[#E6E2D9] px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[10px] sm:text-[11px] font-medium text-[#716F65] bg-[#FAF9F5] border border-[#E6E2D9] px-2 py-0.5 rounded-full flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               <span>{plan.date}</span>
             </span>
@@ -92,22 +92,22 @@ export default function DailyPlanCard() {
               </span>
             )}
           </div>
-          <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#30362F] mt-1">
+          <h2 className="font-heading font-bold text-lg sm:text-xl md:text-2xl text-[#30362F] mt-1">
             Adaptive Practice • {plan.estimatedMinutes} Minutes
           </h2>
         </div>
 
         {/* Time Budget Selector & Completion Badge */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-4 w-full sm:w-auto">
           {/* Budget Pills */}
-          <div className="flex items-center gap-1 bg-[#FAF9F5] border border-[#E6E2D9] p-1 rounded-xl">
-            <Clock className="w-3.5 h-3.5 text-[#716F65] ml-1.5 mr-1" aria-hidden="true" />
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-[#FAF9F5] border border-[#E6E2D9] p-0.5 sm:p-1 rounded-xl overflow-x-auto no-scrollbar">
+            <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#716F65] ml-1 mr-0.5 shrink-0" aria-hidden="true" />
             {ALLOWED_TIME_BUDGETS.map((mins) => (
               <button
                 key={mins}
                 type="button"
                 onClick={() => setSelectedBudget(mins)}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors focus-accessible ${
+                className={`px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors focus-accessible shrink-0 ${
                   selectedBudget === mins
                     ? "bg-[#203D35] text-white shadow-xs"
                     : "text-[#716F65] hover:text-[#30362F]"
@@ -119,7 +119,7 @@ export default function DailyPlanCard() {
           </div>
 
           {/* Radial Completion Percentage */}
-          <div className="w-12 h-12 rounded-full bg-[#FAF9F5] border-2 border-[#CEDDD2] flex items-center justify-center font-heading font-bold text-sm text-[#203D35] shrink-0">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#FAF9F5] border-2 border-[#CEDDD2] flex items-center justify-center font-heading font-bold text-xs sm:text-sm text-[#203D35] shrink-0">
             {evaluation.percentage}%
           </div>
         </div>
@@ -127,12 +127,12 @@ export default function DailyPlanCard() {
 
       {/* Progress Track */}
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between text-xs text-[#716F65]">
+        <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs text-[#716F65]">
           <span>
             {evaluation.completedCount} of {evaluation.totalCount} completed
           </span>
-          <span>
-            {evaluation.completedMinutes}m completed • {evaluation.remainingMinutes}m remaining
+          <span className="font-medium">
+            {evaluation.completedMinutes}m done • {evaluation.remainingMinutes}m left
           </span>
         </div>
         <div className="w-full h-2.5 bg-[#FAF9F5] border border-[#E6E2D9] rounded-full overflow-hidden">
