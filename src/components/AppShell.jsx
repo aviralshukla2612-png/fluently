@@ -1,9 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { User } from "lucide-react";
+import {
+  User,
+  Menu,
+  X,
+  House,
+  GraduationCap,
+  Languages,
+  AudioLines,
+  MessageSquare,
+  BookOpen,
+  BookMarked,
+  ChartNoAxesColumnIncreasing,
+} from "lucide-react";
 import Navbar from "./Navbar";
 import MobileBottomNav from "./MobileBottomNav";
 import LanguageSelector from "./LanguageSelector";
@@ -12,6 +25,12 @@ import { useAuth } from "@/lib/auth/useAuth";
 export default function AppShell({ children }) {
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const isConversation = pathname === "/conversation";
   const isAuthActive = pathname === "/settings" || pathname === "/login";
 
@@ -60,7 +79,7 @@ export default function AppShell({ children }) {
               <Navbar />
             </div>
 
-            {/* Right Controls: Language Selector + Sign In / User Profile */}
+            {/* Right Controls: Language Selector + Sign In + Mobile Menu Button */}
             <div className="flex items-center gap-2 shrink-0">
               <LanguageSelector />
               <Link
@@ -83,13 +102,81 @@ export default function AppShell({ children }) {
                   {isAuthenticated ? (user?.displayName || "Account") : "Sign In"}
                 </span>
               </Link>
+
+              {/* Mobile Menu Toggle Button (< lg) */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#E6E2D9] text-[#30362F] hover:bg-[#FAF9F5] focus-accessible shadow-xs transition-colors"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-4 h-4 text-[#203D35]" aria-hidden="true" />
+                ) : (
+                  <Menu className="w-4 h-4 text-[#716F65]" aria-hidden="true" />
+                )}
+              </button>
             </div>
           </div>
 
-          {/* Mobile / Tablet Nav Pill row when < lg (smooth horizontal swipe without left clipping) */}
-          <div className="lg:hidden w-full flex justify-start sm:justify-center overflow-x-auto no-scrollbar py-0.5 px-1 sm:px-0">
-            <Navbar />
-          </div>
+          {/* Mobile / Tablet Full Navigation Drawer (< lg) */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden w-full bg-white border border-[#E6E2D9] rounded-2xl p-3 shadow-card animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#466657] px-3 pt-1 pb-2">
+                All Modules & Practice
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                {[
+                  { label: "Home", href: "/", icon: House, desc: "Daily practice & overview" },
+                  { label: "Mock Tests", href: "/mock-tests", icon: GraduationCap, desc: "IELTS & diagnostic tests" },
+                  { label: "Say It", href: "/say-it", icon: Languages, desc: "Sentence shadowing & scoring" },
+                  { label: "Dictation", href: "/dictation", icon: AudioLines, desc: "Active listening transcription" },
+                  { label: "Conversation", href: "/conversation", icon: MessageSquare, desc: "Interactive AI dialogue" },
+                  { label: "Grammar", href: "/grammar", icon: BookOpen, desc: "Syntax lessons & quizzes" },
+                  { label: "Vocabulary", href: "/vocabulary", icon: BookMarked, desc: "Spaced repetition flashcards" },
+                  { label: "Progress", href: "/progress", icon: ChartNoAxesColumnIncreasing, desc: "Streak, analytics & review" },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    item.href === "/"
+                      ? pathname === "/"
+                      : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 p-2.5 rounded-xl transition-colors focus-accessible ${
+                        isActive
+                          ? "bg-[#E3EDE6] text-[#203D35] font-semibold"
+                          : "text-[#30362F] hover:bg-[#FAF9F5]"
+                      }`}
+                    >
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                          isActive
+                            ? "bg-[#203D35] text-white shadow-xs"
+                            : "bg-[#FAF9F5] border border-[#E6E2D9] text-[#716F65]"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" aria-hidden="true" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-xs font-semibold leading-tight truncate">
+                          {item.label}
+                        </span>
+                        <span className="text-[11px] text-[#716F65] leading-tight truncate">
+                          {item.desc}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Sub-bar beneath navigation aligned with main content */}
           <div className="w-full max-w-[1120px] mx-auto px-2 sm:px-0 flex items-center justify-between border-b border-[#E6E2D9]/60 pb-2 pt-0.5 text-[11px] sm:text-xs text-[#929087]">
