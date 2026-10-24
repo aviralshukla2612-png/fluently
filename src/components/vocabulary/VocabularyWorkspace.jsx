@@ -27,56 +27,56 @@ export default function VocabularyWorkspace() {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setActiveTab("explorer")}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors focus-accessible ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-colors focus-accessible ${
               activeTab === "explorer"
                 ? "bg-[#203D35] text-white shadow-xs"
                 : "bg-white border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-[#FAF9F5]"
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+            <BookOpen className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Word Bank ({VOCABULARY_DATASET.length.toLocaleString()})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("flashcards")}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors focus-accessible ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-colors focus-accessible ${
               activeTab === "flashcards"
                 ? "bg-[#203D35] text-white shadow-xs"
                 : "bg-white border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-[#FAF9F5]"
             }`}
           >
-            <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+            <Layers className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Flashcards</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("quiz")}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors focus-accessible ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-colors focus-accessible ${
               activeTab === "quiz"
                 ? "bg-[#203D35] text-white shadow-xs"
                 : "bg-white border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-[#FAF9F5]"
             }`}
           >
-            <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
+            <HelpCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Quiz Practice</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("due")}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors focus-accessible ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-colors focus-accessible ${
               activeTab === "due"
                 ? "bg-[#203D35] text-white shadow-xs"
                 : "bg-white border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-[#FAF9F5]"
             }`}
           >
-            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+            <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Due Today ({dueWords.length})</span>
           </button>
         </div>

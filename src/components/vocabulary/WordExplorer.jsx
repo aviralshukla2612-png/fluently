@@ -19,9 +19,24 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 
-const ITEMS_PER_PAGE = 24;
+const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
+
+function getVisiblePages(current, total) {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, "...", total];
+  }
+  if (current >= total - 3) {
+    return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+  }
+  return [1, "...", current - 1, current, current + 1, "...", total];
+}
 
 export default function WordExplorer({ words = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +45,8 @@ export default function WordExplorer({ words = [] }) {
   const [savedIds, setSavedIds] = useState(() => getSavedWordIds());
   const [filterSavedOnly, setFilterSavedOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(24);
+  const [jumpPageInput, setJumpPageInput] = useState("");
 
   // Dynamic categories
   const categories = ["All", ...new Set(words.map((w) => w.category))];
@@ -52,10 +69,30 @@ export default function WordExplorer({ words = [] }) {
     return true;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filteredWords.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(filteredWords.length / pageSize));
   const validCurrentPage = Math.min(currentPage, totalPages);
-  const startIndex = (validCurrentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedWords = filteredWords.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const startIndex = (validCurrentPage - 1) * pageSize;
+  const paginatedWords = filteredWords.slice(startIndex, startIndex + pageSize);
+
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("words-list-header");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    const page = Math.max(1, Math.min(totalPages, newPage));
+    setCurrentPage(page);
+    scrollToTop();
+  };
+
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
 
   const handleSearchChange = (val) => {
     setSearchQuery(val);
@@ -75,6 +112,15 @@ export default function WordExplorer({ words = [] }) {
   const handleSavedOnlyChange = () => {
     setFilterSavedOnly((prev) => !prev);
     setCurrentPage(1);
+  };
+
+  const handleJumpSubmit = (e) => {
+    e.preventDefault();
+    const parsed = parseInt(jumpPageInput, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= totalPages) {
+      handlePageChange(parsed);
+      setJumpPageInput("");
+    }
   };
 
   const handlePlayPronunciation = (wordText) => {
@@ -158,15 +204,63 @@ export default function WordExplorer({ words = [] }) {
         </div>
       </div>
 
-      {/* Words Grid Status */}
-      <div className="flex items-center justify-between px-1 text-xs text-[#716F65]">
-        <span>
-          Showing <strong className="text-[#30362F] font-semibold">{filteredWords.length > 0 ? startIndex + 1 : 0}–{Math.min(startIndex + ITEMS_PER_PAGE, filteredWords.length)}</strong> of <strong className="text-[#30362F] font-semibold">{filteredWords.length}</strong> words
-          {selectedCategory !== "All" && ` in ${selectedCategory}`}
-        </span>
-        <span className="text-[11px] text-[#929087]">
-          Page {validCurrentPage} of {totalPages} • Tap Pronounce for audio
-        </span>
+      {/* Words Grid Status & Top Quick Pagination */}
+      <div id="words-list-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-1 text-xs text-[#716F65] pt-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span>
+            Showing <strong className="text-[#30362F] font-semibold">{filteredWords.length > 0 ? startIndex + 1 : 0}–{Math.min(startIndex + pageSize, filteredWords.length)}</strong> of <strong className="text-[#30362F] font-semibold">{filteredWords.length.toLocaleString()}</strong> words
+          </span>
+
+          {/* Page Size Selector */}
+          <div className="flex items-center gap-1 ml-1 text-[11px]">
+            <span className="text-[#929087]">Show:</span>
+            {PAGE_SIZE_OPTIONS.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => handlePageSizeChange(size)}
+                className={`px-1.5 py-0.5 rounded font-medium transition-colors ${
+                  pageSize === size
+                    ? "bg-[#203D35] text-white"
+                    : "text-[#716F65] hover:text-[#30362F] hover:bg-[#FAF9F5]"
+                }`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Compact Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <button
+              type="button"
+              disabled={validCurrentPage <= 1}
+              onClick={() => handlePageChange(validCurrentPage - 1)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-[#E6E2D9] text-[#30362F] hover:bg-[#FAF9F5] disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Prev</span>
+            </button>
+
+            <span className="text-xs font-medium text-[#30362F]">
+              {validCurrentPage} / {totalPages}
+            </span>
+
+            <button
+              type="button"
+              disabled={validCurrentPage >= totalPages}
+              onClick={() => handlePageChange(validCurrentPage + 1)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-[#E6E2D9] text-[#30362F] hover:bg-[#FAF9F5] disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
+              aria-label="Next page"
+            >
+              <span>Next</span>
+              <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Words Grid */}
@@ -183,14 +277,14 @@ export default function WordExplorer({ words = [] }) {
             return (
               <div
                 key={item.id}
-                className="bg-white border border-[#E6E2D9] rounded-2xl p-6 shadow-card hover:border-[#CEDDD2] transition-colors flex flex-col justify-between gap-4"
+                className="bg-white border border-[#E6E2D9] rounded-2xl p-5 sm:p-6 shadow-card hover:border-[#CEDDD2] transition-colors flex flex-col justify-between gap-4"
               >
                 <div>
                   {/* Card Header */}
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-baseline gap-2.5">
-                        <h3 className="font-heading font-bold text-2xl text-[#30362F]">
+                        <h3 className="font-heading font-bold text-xl sm:text-2xl text-[#30362F]">
                           {item.word}
                         </h3>
                         <span className="text-xs font-medium text-[#716F65] italic">
@@ -276,34 +370,104 @@ export default function WordExplorer({ words = [] }) {
         </div>
       )}
 
-      {/* Pagination Controls */}
+      {/* Comprehensive Bottom Pagination Bar */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between gap-3 pt-3 border-t border-[#E6E2D9]">
-          <button
-            type="button"
-            disabled={validCurrentPage <= 1}
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-[#E6E2D9] text-[#30362F] hover:bg-[#FAF9F5] disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Previous</span>
-          </button>
-
-          <div className="flex items-center gap-1 text-xs">
-            <span className="text-[#716F65]">
-              Page <strong className="text-[#30362F] font-semibold">{validCurrentPage}</strong> of <strong className="text-[#30362F] font-semibold">{totalPages}</strong>
-            </span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#E6E2D9] bg-white p-4 rounded-2xl shadow-xs">
+          {/* Left: Previous & First buttons */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              disabled={validCurrentPage <= 1}
+              onClick={() => handlePageChange(1)}
+              className="p-2 rounded-xl text-xs font-medium bg-[#FAF9F5] border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed focus-accessible"
+              title="First Page"
+              aria-label="First Page"
+            >
+              <ChevronsLeft className="w-4 h-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              disabled={validCurrentPage <= 1}
+              onClick={() => handlePageChange(validCurrentPage - 1)}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium bg-[#FAF9F5] border border-[#E6E2D9] text-[#30362F] hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Previous</span>
+            </button>
           </div>
 
-          <button
-            type="button"
-            disabled={validCurrentPage >= totalPages}
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white border border-[#E6E2D9] text-[#30362F] hover:bg-[#FAF9F5] disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
-          >
-            <span>Next</span>
-            <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
+          {/* Middle: Numbered Page Buttons */}
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+            {getVisiblePages(validCurrentPage, totalPages).map((p, idx) => {
+              if (p === "...") {
+                return (
+                  <span key={`ellipsis-${idx}`} className="px-1.5 text-xs text-[#929087]">
+                    ...
+                  </span>
+                );
+              }
+
+              const isCurrent = p === validCurrentPage;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => handlePageChange(p)}
+                  className={`w-8 h-8 rounded-xl text-xs font-semibold flex items-center justify-center transition-colors focus-accessible ${
+                    isCurrent
+                      ? "bg-[#203D35] text-white shadow-xs"
+                      : "bg-[#FAF9F5] border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-white"
+                  }`}
+                  aria-current={isCurrent ? "page" : undefined}
+                >
+                  {p}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right: Next & Last buttons + Jump Input */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={validCurrentPage >= totalPages}
+              onClick={() => handlePageChange(validCurrentPage + 1)}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium bg-[#FAF9F5] border border-[#E6E2D9] text-[#30362F] hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed focus-accessible shadow-xs"
+            >
+              <span>Next</span>
+              <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              disabled={validCurrentPage >= totalPages}
+              onClick={() => handlePageChange(totalPages)}
+              className="p-2 rounded-xl text-xs font-medium bg-[#FAF9F5] border border-[#E6E2D9] text-[#716F65] hover:text-[#30362F] hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed focus-accessible"
+              title="Last Page"
+              aria-label="Last Page"
+            >
+              <ChevronsRight className="w-4 h-4" aria-hidden="true" />
+            </button>
+
+            {/* Jump to Page input */}
+            <form onSubmit={handleJumpSubmit} className="flex items-center gap-1 ml-2">
+              <input
+                type="number"
+                min={1}
+                max={totalPages}
+                value={jumpPageInput}
+                onChange={(e) => setJumpPageInput(e.target.value)}
+                placeholder="Page"
+                className="w-14 px-2 py-1.5 text-xs text-center bg-[#FAF9F5] border border-[#E6E2D9] rounded-lg focus-accessible"
+                aria-label="Jump to page"
+              />
+              <button
+                type="submit"
+                className="px-2.5 py-1.5 text-xs font-semibold bg-[#203D35] text-white rounded-lg hover:bg-[#294C42] focus-accessible transition-colors"
+              >
+                Go
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

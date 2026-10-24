@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import ScenarioSelectorModal from "./ScenarioSelectorModal";
 import {
+  ArrowLeft,
   Compass,
   RotateCcw,
   Award,
@@ -56,6 +58,16 @@ export default function ConversationHeader({
       {/* Top Row: Title, Scenario, Language, Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+          {/* Go Back to Home */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E6E2D9] text-[#716F65] hover:text-[#203D35] hover:border-[#CEDDD2] hover:bg-[#FAF9F5] text-xs font-semibold transition-colors focus-accessible shadow-xs shrink-0"
+            title="Go back to Home"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Back</span>
+          </Link>
+
           {/* Scenario Selector */}
           <button
             type="button"

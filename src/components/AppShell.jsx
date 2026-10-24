@@ -196,7 +196,7 @@ export default function AppShell({ children }) {
       <main
         className={`flex-1 w-full max-w-[1120px] mx-auto px-3 sm:px-6 md:px-8 ${
           isConversation
-            ? "flex flex-col min-h-0 overflow-hidden pb-2 pt-1"
+            ? "flex flex-col min-h-0 overflow-hidden pb-20 md:pb-2 pt-1"
             : "py-4 sm:py-6 md:py-10 pb-24 md:pb-10"
         }`}
       >

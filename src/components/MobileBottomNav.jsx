@@ -23,11 +23,6 @@ const MOBILE_NAV_ITEMS = [
 export default function MobileBottomNav() {
   const pathname = usePathname();
 
-  // Hide mobile bottom bar on conversation page to give 100% viewport to the chat composer & virtual keyboard
-  if (pathname === "/conversation") {
-    return null;
-  }
-
   const isItemActive = (href) => {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
