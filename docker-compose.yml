@@ -1,0 +1,9 @@
+services:
+  fluently:
+    build: .
+    container_name: fluently-app
+    restart: always
+    ports:
+      - "3030:3000"
+    env_file:
+      - .env.production
