@@ -1,14 +1,21 @@
 {
-  "name": "tryshadow",
+  "name": "fluently",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/scoring.test.js tests/ai_feedback.test.js tests/progress.test.js tests/dictation.test.js tests/vocabulary.test.js tests/grammar.test.js tests/daily_plan.test.js tests/conversation.test.js tests/auth.test.js tests/conversation_api.test.js tests/conversation_voice.test.js tests/conversation_multilingual.test.js tests/learning_intelligence.test.js tests/goals_achievements.test.js tests/coach_practice.test.js tests/production_hardening.test.js tests/ielts_scoring.test.js tests/ielts_exam_engine.test.js tests/ielts_ai_evaluation.test.js tests/ielts_payments.test.js tests/ielts_flow_integration.test.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:status": "prisma migrate status"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "lucide-react": "^1.61.0",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0"
@@ -17,6 +24,7 @@
     "@tailwindcss/turbopack": "^4",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4"
   }
 }

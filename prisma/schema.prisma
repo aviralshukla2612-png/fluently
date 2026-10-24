@@ -1,0 +1,387 @@
+// Shadowly / Lingova — Database Schema
+// Phase 6: Authentication, PostgreSQL Persistence & Multi-Device Sync
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  preferences          UserPreference?
+  activities           LearningActivity[]
+  vocabularyProgress   VocabularyProgress[]
+  savedVocabulary      SavedVocabulary[]
+  grammarProgress      GrammarProgress[]
+  conversationSessions ConversationSession[]
+  dailyPlans           DailyPlan[]
+  learningGoals        LearningGoal[]
+  achievements         UserAchievement[]
+  examOrders           ExamOrder[]
+  examAttempts         ExamAttempt[]
+  examReports          ExamReport[]
+
+  @@map("users")
+}
+
+model UserPreference {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  learningLevel      String   @default("intermediate")
+  preferredLanguage  String   @default("en")
+  correctionMode     String   @default("gentle")
+  autoSpeakReplies   Boolean  @default(true)
+  dailyTargetMinutes Int      @default(15)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model LearningActivity {
+  id         String   @id @default(cuid())
+  userId     String
+  module     String
+  exerciseId String
+  status     String   @default("completed")
+  score      Float?
+  difficulty String   @default("intermediate")
+  duration   Int?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, module, createdAt])
+  @@index([userId, createdAt])
+  @@map("learning_activities")
+}
+
+model VocabularyProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  wordId         String
+  reviewInterval Int       @default(1)
+  nextReviewDate String
+  reviewCount    Int       @default(0)
+  learningStatus String    @default("learning")
+  lastReviewedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId, nextReviewDate])
+  @@map("vocabulary_progress")
+}
+
+model SavedVocabulary {
+  id        String   @id @default(cuid())
+  userId    String
+  wordId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@map("saved_vocabulary")
+}
+
+model GrammarProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  status      String   @default("completed")
+  bestScore   Float?
+  completedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("grammar_progress")
+}
+
+model ConversationSession {
+  id             String    @id @default(cuid())
+  userId         String
+  scenarioId     String
+  learningLevel  String
+  correctionMode String
+  startedAt      DateTime  @default(now())
+  endedAt        DateTime?
+  status         String    @default("active")
+  summaryData    Json?
+
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages ConversationMessage[]
+
+  @@index([userId, startedAt])
+  @@map("conversation_sessions")
+}
+
+model ConversationMessage {
+  id               String   @id @default(cuid())
+  sessionId        String
+  role             String
+  content          String
+  corrections      Json?
+  usefulPhrase     String?
+  followUpQuestion String?
+  createdAt        DateTime @default(now())
+
+  session ConversationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@map("conversation_messages")
+}
+
+model DailyPlan {
+  id             String   @id @default(cuid())
+  userId         String
+  planDate       String
+  planVersion    String   @default("1.0.0")
+  tasks          Json
+  completedState Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planDate])
+  @@map("daily_plans")
+}
+
+model LearningGoal {
+  id          String   @id @default(cuid())
+  userId      String
+  goalType    String   // daily_minutes, weekly_minutes, daily_activities, weekly_activities, weekly_days, skill_activities
+  targetValue Int
+  targetUnit  String   // minutes, activities, days
+  skill       String?  // speaking, dictation, grammar, vocabulary, conversation
+  status      String   @default("active") // active, paused, completed, archived
+  startDate   String
+  endDate     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("learning_goals")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+  progress      Float    @default(100.0)
+  metadata      Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId, unlockedAt])
+  @@map("user_achievements")
+}
+
+// ========================================================
+// Shadowly IELTS-Style Mock Exam & Assessment Subsystem
+// ========================================================
+
+model Exam {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  examType        String        @default("ACADEMIC") // ACADEMIC, GENERAL_TRAINING
+  version         String        @default("1.0.0")
+  status          String        @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  description     String?
+  durationMinutes Int           @default(165)
+  pricePaise      Int           @default(19900)
+  currency        String        @default("INR")
+  isDiagnostic    Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  sections ExamSection[]
+  attempts ExamAttempt[]
+  orders   ExamOrder[]
+
+  @@map("exams")
+}
+
+model ExamSection {
+  id              String   @id @default(cuid())
+  examId          String
+  sectionType     String   // LISTENING, READING, WRITING, SPEAKING
+  title           String
+  orderIndex      Int
+  durationMinutes Int
+  instructions    String?
+  config          Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  exam      Exam           @relation(fields: [examId], references: [id], onDelete: Cascade)
+  questions ExamQuestion[]
+
+  @@unique([examId, sectionType])
+  @@map("exam_sections")
+}
+
+model ExamQuestion {
+  id              String   @id @default(cuid())
+  sectionId       String
+  questionNumber  Int
+  questionType    String   // MULTIPLE_CHOICE, TRUE_FALSE_NOT_GIVEN, MATCHING, COMPLETION, SHORT_ANSWER, WRITING_TASK1, WRITING_TASK2, SPEAKING_PART1, SPEAKING_PART2, SPEAKING_PART3
+  prompt          String
+  passageText     String?
+  audioUrl        String?
+  options         Json?
+  correctAnswerKey Json?   // Server-only: string or array of accepted answers
+  scoringRubric   Json?    // Server-only scoring instructions / criteria
+  wordLimit       Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  section ExamSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId, questionNumber])
+  @@map("exam_questions")
+}
+
+model ExamOrder {
+  id                  String               @id @default(cuid())
+  userId              String
+  examId              String
+  amountPaise         Int                  @default(19900)
+  currency            String               @default("INR")
+  status              String               @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  provider            String               @default("razorpay")
+  providerOrderId     String?              @unique
+  providerPaymentId   String?              @unique
+  providerSignature   String?
+  paidAt              DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam         Exam                 @relation(fields: [examId], references: [id], onDelete: Cascade)
+  transactions PaymentTransaction[]
+  attempts     ExamAttempt[]
+
+  @@index([userId, status])
+  @@map("exam_orders")
+}
+
+model PaymentTransaction {
+  id                String    @id @default(cuid())
+  orderId           String
+  providerPaymentId String?
+  eventType         String    // ORDER_CREATED, PAYMENT_VERIFIED, WEBHOOK_RECEIVED, REFUND_ISSUED
+  status            String
+  payload           Json?
+  verified          Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+
+  order ExamOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, eventType])
+  @@map("payment_transactions")
+}
+
+model ExamAttempt {
+  id               String              @id @default(cuid())
+  userId           String
+  examId           String
+  orderId          String?
+  isDiagnostic     Boolean             @default(false)
+  examVersion      String              @default("1.0.0")
+  status           String              @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SECTION_IN_PROGRESS, SUBMITTED, EVALUATING, COMPLETED, EXPIRED, CANCELLED
+  currentSection   String?             // LISTENING, READING, WRITING, SPEAKING
+  startedAt        DateTime?
+  expiresAt        DateTime?
+  submittedAt      DateTime?
+  completedAt      DateTime?
+  overallBandScore Float?
+  overallSummary   String?
+  scoringVersion   String              @default("v1-academic")
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam           Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
+  order          ExamOrder?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  responses      ExamResponse[]
+  sectionResults ExamSectionResult[]
+  report         ExamReport?
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@map("exam_attempts")
+}
+
+model ExamResponse {
+  id            String   @id @default(cuid())
+  attemptId     String
+  sectionType   String
+  questionId    String
+  responseValue String?
+  wordCount     Int?
+  savedAt       DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  attempt ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId, sectionType])
+  @@map("exam_responses")
+}
+
+model ExamSectionResult {
+  id              String   @id @default(cuid())
+  attemptId       String
+  sectionType     String
+  rawScore        Float?
+  maxRawScore     Float?
+  estimatedBand   Float?
+  criterionScores Json?
+  feedbackSummary String?
+  strengths       Json?
+  weaknesses      Json?
+  recommendations Json?
+  evaluatedAt     DateTime @default(now())
+
+  attempt ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, sectionType])
+  @@map("exam_section_results")
+}
+
+model ExamReport {
+  id          String   @id @default(cuid())
+  attemptId   String   @unique
+  userId      String
+  reportData  Json
+  generatedAt DateTime @default(now())
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempt ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([userId, generatedAt])
+  @@map("exam_reports")
+}
+

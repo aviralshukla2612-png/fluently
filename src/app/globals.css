@@ -1,26 +1,150 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Background */
+  --bg-ivory: #F5F2EA;
+  --bg-ivory-alt: #F0EDE4;
+
+  /* Surfaces */
+  --surface-primary: #FFFFFF;
+  --surface-secondary: #FAF9F5;
+  --surface-inset: #F2F0E9;
+
+  /* Brand */
+  --brand-forest: #203D35;
+  --brand-forest-hover: #294C42;
+  --brand-sage: #E3EDE6;
+  --brand-sage-border: #CEDDD2;
+  --brand-sage-text: #466657;
+
+  /* Text */
+  --text-primary: #30362F;
+  --text-secondary: #716F65;
+  --text-tertiary: #929087;
+  --text-inverse: #FFFFFF;
+
+  /* Borders */
+  --border-standard: #E6E2D9;
+  --border-strong: #D6D1C6;
+  --focus-ring: #638D7A;
+
+  /* Semantic */
+  --color-success: #327653;
+  --color-success-bg: #E7F2E9;
+  --color-warning: #93621B;
+  --color-warning-bg: #F8EFD9;
+  --color-error: #A5413B;
+  --color-error-bg: #F8E8E5;
+  --color-info: #466D91;
+  --color-info-bg: #E9F0F7;
+
+  /* Phase 2 Voice Engine Tokens */
+  --brand-indigo: #5146D8;
+  --brand-pale-violet: #E8E5FF;
+  --brand-navy: #202342;
+  --text-muted-violet: #74758A;
+  --border-violet: #E8E5F0;
+  --color-recording: #D94A64;
+  --color-recording-pulse: rgba(217, 74, 100, 0.25);
+  --color-success-soft: #E8F6EE;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-ivory: var(--bg-ivory);
+  --color-ivory-alt: var(--bg-ivory-alt);
+  
+  --color-surface: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-inset: var(--surface-inset);
+
+  --color-forest: var(--brand-forest);
+  --color-forest-hover: var(--brand-forest-hover);
+  --color-sage: var(--brand-sage);
+  --color-sage-border: var(--brand-sage-border);
+  --color-sage-text: var(--brand-sage-text);
+
+  --color-charcoal: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-tertiary: var(--text-tertiary);
+  --color-inverse: var(--text-inverse);
+
+  --color-border-warm: var(--border-standard);
+  --color-border-strong: var(--border-strong);
+  --color-ring-focus: var(--focus-ring);
+
+  --color-semantic-success: var(--color-success);
+  --color-semantic-success-bg: var(--color-success-bg);
+  --color-semantic-warning: var(--color-warning);
+  --color-semantic-warning-bg: var(--color-warning-bg);
+  --color-semantic-error: var(--color-error);
+  --color-semantic-error-bg: var(--color-error-bg);
+  --color-semantic-info: var(--color-info);
+  --color-semantic-info-bg: var(--color-info-bg);
+
+  --font-heading: var(--font-manrope), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-ivory);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide Next.js floating dev indicator button that obstructs UI */
+[data-nextjs-dev-tools-button],
+nextjs-portal {
+  display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Subtle, soft shadow for navigation and cards */
+.shadow-pill {
+  box-shadow: 0 2px 8px -2px rgba(48, 54, 47, 0.05), 0 1px 3px -1px rgba(48, 54, 47, 0.03);
+}
+
+.shadow-card {
+  box-shadow: 0 4px 16px -4px rgba(48, 54, 47, 0.04), 0 1px 4px -1px rgba(48, 54, 47, 0.02);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 10px 24px -6px rgba(48, 54, 47, 0.07), 0 2px 6px -1px rgba(48, 54, 47, 0.03);
+}
+
+/* Visually hidden scrollbar for horizontal mobile navigation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Accessible focus ring */
+.focus-accessible:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Respect motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
